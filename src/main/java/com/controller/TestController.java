@@ -1,4 +1,4 @@
-package com.action;
+package com.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class TestAction {
+public class TestController {
 
 	
 	@RequestMapping(value="testJson",method=RequestMethod.GET)
