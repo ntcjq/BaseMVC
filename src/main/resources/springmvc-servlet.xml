@@ -15,7 +15,7 @@
 		<!-- 加载mvc默认驱动 -->
 		<mvc:annotation-driven/>
 		<!-- 扫描包 -->
-		<contex:component-scan base-package="com.action"></contex:component-scan>
+		<contex:component-scan base-package="com.controller"></contex:component-scan>
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value=""></property>
 		<property name="suffix" value=".jsp"></property>
