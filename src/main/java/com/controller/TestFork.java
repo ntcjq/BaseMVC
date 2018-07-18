@@ -20,12 +20,12 @@ import com.util.JbpmUtil;
  * @author v.cuijq
  *
  */
-public class TestTask extends JbpmTestCase implements JbpmUtil{
+public class TestFork extends JbpmTestCase implements JbpmUtil{
 
 	@Override
 	public void deploy() {
 		super.setUp();
-		repositoryService.createDeployment().addResourceFromClasspath("jpdl/task.jpdl.xml").deploy();
+		repositoryService.createDeployment().addResourceFromClasspath("jpdl/fork.jpdl.xml").deploy();
 	}
 
 	@Override
@@ -36,13 +36,14 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 		Map<String,Object> map = new HashMap<>();
 		map.put("user", user);
 		//创建流程 同时 新增流程变量
-		ProcessInstance processInstance = executionService.startProcessInstanceByKey("task",map);
+		ProcessInstance processInstance = executionService.startProcessInstanceByKey("fork",map);
 		print("流程实例ID",processInstance.getId());
 	}
 
 	@Override
 	public void getCurrentActivity() {
-		// TODO Auto-generated method stub
+		String activityName = executionService.createProcessInstanceQuery().processInstanceId("fork.20001").uniqueResult().findActiveActivityNames().toString();
+		System.out.println("流程当前所在节点："+activityName);
 		
 	}
 
@@ -59,7 +60,7 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 	@Override
 	public void completeTask() {
 		// TODO Auto-generated method stub
-		taskService.completeTask("20009");
+		taskService.completeTask("40001");
 	}
 	//新增任务变量
 	public void addTaskVar() {
@@ -81,18 +82,18 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 	
 	//流程变量获取
 	public void getInstanceVar() {
-		Set<String> set = executionService.getVariableNames("test.80001");
+		Set<String> set = executionService.getVariableNames("fork.20001");
 		Iterator it = set.iterator();
 		while(it.hasNext()) {
 			System.out.print(it.next()+", ");
 		}
 		
-		String value = (String)executionService.getVariable("test.80001", "userId");
+		String value = (String)executionService.getVariable("fork.20001", "deptManager");
 		System.out.println();
 		System.out.println("value："+value);
 	}
 	//流程变量更新或者新增
 	public void updateInstanceVar() {
-		executionService.setVariable("el.120001", "deptManager","cnm");
+		executionService.setVariable("fork.20001", "deptManager","cnm");
 	}
 }

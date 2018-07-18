@@ -20,12 +20,12 @@ import com.util.JbpmUtil;
  * @author v.cuijq
  *
  */
-public class TestTask extends JbpmTestCase implements JbpmUtil{
+public class TestTaskSwimlane extends JbpmTestCase implements JbpmUtil{
 
 	@Override
 	public void deploy() {
 		super.setUp();
-		repositoryService.createDeployment().addResourceFromClasspath("jpdl/task.jpdl.xml").deploy();
+		repositoryService.createDeployment().addResourceFromClasspath("jpdl/taskSwimlane.jpdl.xml").deploy();
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 		Map<String,Object> map = new HashMap<>();
 		map.put("user", user);
 		//创建流程 同时 新增流程变量
-		ProcessInstance processInstance = executionService.startProcessInstanceByKey("task",map);
+		ProcessInstance processInstance = executionService.startProcessInstanceByKey("taskSwimlane",map);
 		print("流程实例ID",processInstance.getId());
 	}
 
@@ -48,7 +48,8 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 
 	@Override
 	public void getTask() {
-		List<Task> tasks = taskService.findPersonalTasks("B");
+		List<Task> tasks = taskService.findPersonalTasks("U1");
+		System.out.println("任务数量:"+tasks.size());
 		for(int i = 0;i<tasks.size();i++) {
 			Task task = tasks.get(i);
 			System.out.println("任务名称："+task.getActivityName()+" 处理人："+task.getAssignee() +" 任务ID:"+task.getId());
@@ -59,7 +60,7 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 	@Override
 	public void completeTask() {
 		// TODO Auto-generated method stub
-		taskService.completeTask("20009");
+		taskService.completeTask("180001");
 	}
 	//新增任务变量
 	public void addTaskVar() {
@@ -91,7 +92,7 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 		System.out.println();
 		System.out.println("value："+value);
 	}
-	//流程变量更新或者新增
+	//流程变量更新
 	public void updateInstanceVar() {
 		executionService.setVariable("el.120001", "deptManager","cnm");
 	}

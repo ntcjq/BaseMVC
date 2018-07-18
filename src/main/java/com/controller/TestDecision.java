@@ -20,30 +20,28 @@ import com.util.JbpmUtil;
  * @author v.cuijq
  *
  */
-public class TestTask extends JbpmTestCase implements JbpmUtil{
+public class TestDecision extends JbpmTestCase implements JbpmUtil{
 
 	@Override
 	public void deploy() {
 		super.setUp();
-		repositoryService.createDeployment().addResourceFromClasspath("jpdl/task.jpdl.xml").deploy();
+		repositoryService.createDeployment().addResourceFromClasspath("jpdl/decision.jpdl.xml").deploy();
 	}
 
 	@Override
 	public void createInstance() {
 		super.setUp();
-		User user = new User();
-		user.setUserName("cjq");
 		Map<String,Object> map = new HashMap<>();
-		map.put("user", user);
+		map.put("node", "大于2天小于10天");//选择去哪个节点
 		//创建流程 同时 新增流程变量
-		ProcessInstance processInstance = executionService.startProcessInstanceByKey("task",map);
+		ProcessInstance processInstance = executionService.startProcessInstanceByKey("decision",map);
 		print("流程实例ID",processInstance.getId());
 	}
 
 	@Override
 	public void getCurrentActivity() {
-		// TODO Auto-generated method stub
-		
+		String activityName = executionService.createProcessInstanceQuery().processInstanceId("decision.260001").uniqueResult().findActiveActivityNames().toString();
+		System.out.println("流程当前所在节点："+activityName);
 	}
 
 	@Override
@@ -59,7 +57,7 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 	@Override
 	public void completeTask() {
 		// TODO Auto-generated method stub
-		taskService.completeTask("20009");
+		taskService.completeTask("260004");
 	}
 	//新增任务变量
 	public void addTaskVar() {
@@ -91,7 +89,7 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 		System.out.println();
 		System.out.println("value："+value);
 	}
-	//流程变量更新或者新增
+	//流程变量更新
 	public void updateInstanceVar() {
 		executionService.setVariable("el.120001", "deptManager","cnm");
 	}

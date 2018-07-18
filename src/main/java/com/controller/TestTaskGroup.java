@@ -20,12 +20,19 @@ import com.util.JbpmUtil;
  * @author v.cuijq
  *
  */
-public class TestTask extends JbpmTestCase implements JbpmUtil{
+public class TestTaskGroup extends JbpmTestCase implements JbpmUtil{
 
 	@Override
 	public void deploy() {
 		super.setUp();
-		repositoryService.createDeployment().addResourceFromClasspath("jpdl/task.jpdl.xml").deploy();
+		
+		String group = identityService.createGroup("manager");
+		//关键是第一个参数
+		identityService.createUser("g1", "aa1", "aaa1");
+		identityService.createUser("g2", "aa2", "aaa2");
+		identityService.createMembership("g1", group);
+		identityService.createMembership("g2", group);
+		repositoryService.createDeployment().addResourceFromClasspath("jpdl/taskGroup.jpdl.xml").deploy();
 	}
 
 	@Override
@@ -36,7 +43,7 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 		Map<String,Object> map = new HashMap<>();
 		map.put("user", user);
 		//创建流程 同时 新增流程变量
-		ProcessInstance processInstance = executionService.startProcessInstanceByKey("task",map);
+		ProcessInstance processInstance = executionService.startProcessInstanceByKey("taskGroup",map);
 		print("流程实例ID",processInstance.getId());
 	}
 
@@ -48,18 +55,24 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 
 	@Override
 	public void getTask() {
-		List<Task> tasks = taskService.findPersonalTasks("B");
+		//注意这边是findGroupTasks，和前面的findPersonalTasks不一样
+		List<Task> tasks = taskService.findGroupTasks("g1");
 		for(int i = 0;i<tasks.size();i++) {
 			Task task = tasks.get(i);
 			System.out.println("任务名称："+task.getActivityName()+" 处理人："+task.getAssignee() +" 任务ID:"+task.getId());
 		}
 		
 	}
+	//给group中的成员分配任务
+	public void takeTask(){
+		//给group中的人员分配任务   参数：任务id，组员
+		taskService.takeTask("210004", "g1");
+	}
 
 	@Override
 	public void completeTask() {
 		// TODO Auto-generated method stub
-		taskService.completeTask("20009");
+		taskService.completeTask("210004");
 	}
 	//新增任务变量
 	public void addTaskVar() {
@@ -91,7 +104,7 @@ public class TestTask extends JbpmTestCase implements JbpmUtil{
 		System.out.println();
 		System.out.println("value："+value);
 	}
-	//流程变量更新或者新增
+	//流程变量更新
 	public void updateInstanceVar() {
 		executionService.setVariable("el.120001", "deptManager","cnm");
 	}

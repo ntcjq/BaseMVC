@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="taskHandler" key="taskHandler" xmlns="http://jbpm.org/4.4/jpdl">
+   <start name="start1" g="427,78,48,48">
+      <transition name="to task1" to="任务A" g="-52,-22"/>
+   </start>
+   <end name="end1" g="447,504,48,48"/>
+   <task name="任务A" g="415,169,92,52">
+   		<assignment-handler class="com.service.AssignTaskA">
+   		</assignment-handler>
+      <transition name="to task2" to="任务B" g="-52,-22"/>
+   </task>
+   <task name="任务B" g="419,274,92,52">
+   		<assignment-handler class="com.service.AssignTaskB">
+   		</assignment-handler>
+      <transition name="to task3" to="任务C" g="-52,-22"/>
+   </task>
+   <task assignee="C" name="任务C" g="431,405,92,52">
+      <transition name="to end1" to="end1" g="-50,-22"/>
+   </task>
+</process>

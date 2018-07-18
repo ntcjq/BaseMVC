@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="decision" xmlns="http://jbpm.org/4.4/jpdl">
+   <start g="60,230,48,48" name="start1">
+      <transition g="-79,-22" name="to exclusive1" to="exclusive1"/>
+   </start>
+   <end g="918,213,48,48" name="end1"/>
+   <decision expr="${node}" g="276,221,48,48" name="exclusive1">
+      <transition g="-52,-22" name="小于2天" to="组长"/>
+      <transition g="-52,-22" name="大于2天小于10天" to="科长"/>
+      <transition g="-52,-22" name="10天以上" to="主任"/>
+   </decision>
+   <task assignee="A" g="513,130,92,52" name="组长">
+      <transition g="-52,-22" name="to task4" to="归档"/>
+   </task>
+   <task assignee="B" g="516,231,92,52" name="科长">
+      <transition g="-52,-22" name="to task4" to="归档"/>
+   </task>
+   <task assignee="C" g="531,372,92,52" name="主任">
+      <transition g="-52,-22" name="to task4" to="归档"/>
+   </task>
+   <task assignee="D" g="760,243,92,52" name="归档">
+      <transition name="to end1" to="end1" g="-50,-22"/>
+   </task>
+</process>
