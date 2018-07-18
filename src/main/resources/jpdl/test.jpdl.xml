@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="test" key="test" xmlns="http://jbpm.org/4.4/jpdl">
+   <start name="start1" g="326,109,48,48">
+      <transition name="提交到科长" to="科长审批" g="-52,-22"/>
+   </start>
+   <task assignee="张三" name="科长审批" g="357,234,92,52">
+      <transition name="提交到主任" to="主任审批" g="-52,-22"/>
+   </task>
+   <task assignee="李四" name="主任审批" g="377,358,92,52">
+      <transition name="通过" to="end1" g="-50,-22"/>
+   </task>
+   <end name="end1" g="364,511,48,48"/>
+</process>

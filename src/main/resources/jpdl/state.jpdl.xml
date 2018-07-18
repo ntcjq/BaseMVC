@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="state" key="state" xmlns="http://jbpm.org/4.4/jpdl">
+   <start name="start1" g="425,124,48,48">
+      <transition name="提交" to="节点A" g="-56,-22"/>
+   </start>
+   <end name="end1" g="444,514,48,48"/>
+   <state name="节点A" g="414,218,92,52">
+      <transition name="to state2" to="节点B" g="-56,-22"/>
+   </state>
+   <state name="节点B" g="421,310,92,52">
+      <transition name="to end1" to="节点C" g="-50,-22"/>
+   </state>
+   <state name="节点C" g="419,414,92,52">
+      <transition name="通过" to="end1" g="-50,-22"/>
+   </state>
+</process>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="el" key="el" xmlns="http://jbpm.org/4.4/jpdl">
+   <start name="start1" g="155,209,48,48">
+      <transition name="to task1" to="项目经理审批" g="-52,-22"/>
+   </start>
+   <end name="end1" g="835,207,48,48"/>
+   <task assignee="${projectManager}" name="项目经理审批" g="348,210,92,52">
+      <transition name="to task2" to="部门经理审批" g="-52,-22"/>
+   </task>
+   <task assignee="${deptManager}" name="部门经理审批" g="599,206,92,52">
+      <transition name="流程结束" to="end1" g="-50,-22"/>
+   </task>
+</process>
