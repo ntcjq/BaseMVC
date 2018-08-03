@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    	http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+    	http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+    ">
+    
+    <!-- 启用注解 -->
+    <context:annotation-config/>
+
+	<bean id="dataSource"
+	      class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	      <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+	      <property name="url" value="jdbc:mysql://localhost:3306/jbpm" />
+	      <property name="username" value="root" />
+	      <property name="password" value="root" />
+	 </bean>
+	 
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">  
+	    <property name="dataSource">  
+	        <ref bean="dataSource" />  
+	    </property>  
+	    <property name="configLocations">  
+	        <list>  
+	               <value>classpath:jbpm.hibernate.cfg.xml</value>  
+	        </list>  
+	    </property>  
+	</bean>  
+  	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">  
+	    <property name="sessionFactory" ref="sessionFactory" />  
+	    <property name="dataSource" ref="dataSource" />  
+  	</bean> 
+  	
+  	
+  	
+  	<bean id="springHelper" class="org.jbpm.pvm.internal.processengine.SpringHelper" />  
+	<!-- 调用上面的springHelper Bean的createProcessEngine方法来创建流程引擎 -->
+    <bean name="processEngine" factory-bean="springHelper" factory-method="createProcessEngine"/>
+    
+    <!-- 配置repositoryService -->    
+    <bean name="repositoryService" factory-bean="processEngine"  factory-method="getRepositoryService"/>
+    
+    <!-- 配置ExecutionService -->
+    <bean name="executionService" factory-bean="processEngine" factory-method="getExecutionService"/>
+    
+    <!-- 配置TaskService -->
+    <bean name="taskService" factory-bean="processEngine" factory-method="getTaskService"/>
+    
+    <bean name="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
+    
+    <bean name="identityService"  factory-bean="processEngine"  factory-method="getIdentityService" />
+    
+    
+</beans>

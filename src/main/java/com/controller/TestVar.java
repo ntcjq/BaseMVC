@@ -36,8 +36,8 @@ public class TestVar extends JbpmTestCase implements JbpmUtil{
 		map.put("userName", "cjq");
 		map.put("title", "请假");
 		//创建流程 同时 新增流程变量
-		ProcessInstance processInstance = executionService.startProcessInstanceByKey("test",map);
-//		ProcessInstance processInstance = executionService.startProcessInstanceById("test-1", map);
+//		ProcessInstance processInstance = executionService.startProcessInstanceByKey("test",map);
+		ProcessInstance processInstance = executionService.startProcessInstanceById("test-1", map);
 		
 		print("流程实例ID",processInstance.getId());
 	}
@@ -51,8 +51,10 @@ public class TestVar extends JbpmTestCase implements JbpmUtil{
 
 	@Override
 	public void getTask() {
+		System.out.println(executionService.findProcessInstanceById("test.100001"));
+		
 		//根据流程实例id查询当前需要执行的task的id
-		Task currentTask = taskService.createTaskQuery().processInstanceId("test.70001").uniqueResult();
+		Task currentTask = taskService.createTaskQuery().processInstanceId("test.100001").uniqueResult();
 		String taskId= currentTask.getId();
 		String taskName = currentTask.getName();
 		System.out.println(taskId+":"+taskName);
@@ -66,7 +68,7 @@ public class TestVar extends JbpmTestCase implements JbpmUtil{
 	@Override
 	public void completeTask() {
 		// TODO Auto-generated method stub
-		taskService.completeTask("80001");
+		taskService.completeTask("100005");
 	}
 	//新增任务变量
 	public void addTaskVar() {
@@ -101,5 +103,9 @@ public class TestVar extends JbpmTestCase implements JbpmUtil{
 	//流程变量更新
 	public void updateInstanceVar() {
 		executionService.setVariable("test.80001", "userId","002");
+	}
+	
+	public void test() {
+		executionService.signalExecutionById("test.120001");
 	}
 }
