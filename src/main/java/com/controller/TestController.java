@@ -8,7 +8,6 @@ import javax.annotation.Resource;
 
 import org.jbpm.api.Execution;
 import org.jbpm.api.ExecutionService;
-import org.jbpm.api.ProcessEngine;
 import org.jbpm.api.ProcessInstance;
 import org.jbpm.api.RepositoryService;
 import org.jbpm.api.TaskService;
@@ -19,9 +18,8 @@ import org.jbpm.pvm.internal.model.ProcessDefinitionImpl;
 import org.jbpm.pvm.internal.model.TransitionImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 @RequestMapping("jbpm")
 @Controller
@@ -39,14 +37,6 @@ public class TestController {
 	@Resource(name="taskService")
 	TaskService taskService;
 	
-	
-	
-	
-	@RequestMapping("test")
-	@ResponseBody
-	public String test(@RequestParam("cn") String  cn) {
-		return cn; 
-	}
 	
 	@RequestMapping("deploy")
 	@ResponseBody
@@ -86,7 +76,8 @@ public class TestController {
 	
 	
 	/**
-	 * 实现自由流无非就是新建一个transition让它指向我们的目标节点，流转到目标节点以后我们必要的需要将这个新的transition给删除，以免影响其他的业务流
+	 * 实现自由流无非就是新建一个transition让它指向我们的目标节点（可用于回退）
+	 * 注意：流转到目标节点以后我们必要的需要将这个新的transition给删除，以免影响其他的业务流
 	 * @param taskId  当前的任务id
 	 * @param endDom  新加的自由流  流向的节点名称
 	 */
@@ -107,7 +98,7 @@ public class TestController {
 	        ActivityImpl goleActivityImpl = processDefinitionImpl.findActivity(endDom);
 
 	        TransitionImpl transitionImpl = activityImpl.createOutgoingTransition();
-	        transitionImpl.setName("新的teansition");
+	        transitionImpl.setName("新的transition");
 	        transitionImpl.setDestination(goleActivityImpl);
 	        activityImpl.addOutgoingTransition(transitionImpl);
 

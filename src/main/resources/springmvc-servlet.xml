@@ -12,10 +12,13 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
 	">
 
-		<!-- 加载mvc默认驱动 -->
-		<mvc:annotation-driven/>
-		<!-- 扫描包 -->
-		<contex:component-scan base-package="com.controller"></contex:component-scan>
+	<!-- 加载mvc默认驱动 -->
+	<!-- 加载mvc默认驱动 -->
+	<mvc:annotation-driven/>
+		
+	<!-- 扫描包 -->
+	<contex:component-scan base-package="com.controller"></contex:component-scan>
+	
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value=""></property>
 		<property name="suffix" value=".jsp"></property>

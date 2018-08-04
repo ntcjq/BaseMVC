@@ -7,8 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jbpm.api.Execution;
 import org.jbpm.api.ProcessInstance;
+import org.jbpm.api.model.Transition;
 import org.jbpm.api.task.Task;
+import org.jbpm.pvm.internal.model.ActivityImpl;
+import org.jbpm.pvm.internal.model.ProcessDefinitionImpl;
+import org.jbpm.pvm.internal.model.TransitionImpl;
 
 import com.util.JbpmTestCase;
 import com.util.JbpmUtil;
@@ -106,6 +111,29 @@ public class TestVar extends JbpmTestCase implements JbpmUtil{
 	}
 	
 	public void test() {
-		executionService.signalExecutionById("test.120001");
+		//当前节点所在环节名称
+//		Task task = taskService.getTask("150005");
+//		String executionId = task.getExecutionId();
+//		String activityName = task.getActivityName();
+//		Execution execution = executionService.findExecutionById(executionId);
+//		ProcessDefinitionImpl processDefinitionImpl = (ProcessDefinitionImpl) repositoryService
+//                .createProcessDefinitionQuery().processDefinitionId(execution.getProcessDefinitionId()).uniqueResult();
+//		ActivityImpl activityImpl = processDefinitionImpl.findActivity(activityName);
+//		//下个环节列表
+//		List<TransitionImpl> list = (List<TransitionImpl>) activityImpl.getOutgoingTransitions();
+//		for(TransitionImpl t : list) {
+//			System.out.println(t.getName());
+//		}
+//		//
+//		Set<String> set = taskService.getOutcomes("150005");
+		Task task = taskService.getTask("150005");
+		String executionId = task.getExecutionId();
+		Execution execution = executionService.findExecutionById(executionId);
+		ProcessDefinitionImpl processDefinition = (ProcessDefinitionImpl)repositoryService.createProcessDefinitionQuery().processDefinitionId(execution.getProcessDefinitionId()).uniqueResult();
+		// 当前流程定义中，所有的Activities
+		List<ActivityImpl> activities = (List<ActivityImpl>) processDefinition.getActivities();
+		for(ActivityImpl obj : activities) {
+			System.out.println(obj.getName());
+		}
 	}
 }
