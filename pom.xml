@@ -17,6 +17,7 @@
 		<taglibs.standard.version>1.1.2</taglibs.standard.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<commons-fileupload.commons-fileupload.version>1.3.1</commons-fileupload.commons-fileupload.version>
+		<mysql-connector-java.version>5.1.34</mysql-connector-java.version>
   </properties>
   <dependencies>
   		<dependency>
@@ -66,6 +67,20 @@
 	        <artifactId>spring-webmvc</artifactId>
 	        <version>${spring.version}</version>	        
 		</dependency>
+		
+		<!-- JTA  start -->
+		<dependency>
+		    <groupId>javax.transaction</groupId>
+		    <artifactId>jta</artifactId>
+		    <version>1.1</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.aspectj</groupId>
+		    <artifactId>aspectjweaver</artifactId>
+		    <version>1.7.4</version>
+		</dependency>
+		<!-- JTA  end -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -128,7 +143,34 @@
 		    <version>${taglibs.standard.version}</version>
 		</dependency>	
 		<!-- end -->
-  	
+  		<!-- 分布式事务 -->
+  	 	<dependency>
+		    <groupId>com.atomikos</groupId>
+		    <artifactId>transactions-jdbc</artifactId>
+		    <version>3.8.0</version>
+		</dependency>
+  	 	<!-- mysql -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-connector-java.version}</version>
+		</dependency>
+		<!-- mybtais -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>3.2.3</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.mybatis.generator</groupId>
+		    <artifactId>mybatis-generator-core</artifactId>
+		    <version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>1.1.1</version>
+		</dependency>
   </dependencies>
   <build>
 	<plugins>
