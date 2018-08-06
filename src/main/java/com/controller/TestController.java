@@ -20,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.service.JbpmService;
+
 
 @RequestMapping("jbpm")
 @Controller
@@ -27,6 +29,9 @@ public class TestController {
 
 //	@Resource(name="processEngine")
 //	ProcessEngine processEngine;
+	
+	@Resource(name="jbpmService")
+	JbpmService jbpmService;
 	
 	@Resource(name="repositoryService")
 	RepositoryService repositoryService;
@@ -109,23 +114,41 @@ public class TestController {
 
 	    }
 
-		/**
-		 * 删除自由流
-		 * @param pd
-		 * @param sourceName
-		 * @param destName
-		 */
-	    public void removeOutTransition(ProcessDefinitionImpl pd, String sourceName, String destName) {
+	/**
+	 * 删除自由流
+	 * @param pd
+	 * @param sourceName
+	 * @param destName
+	 */
+    public void removeOutTransition(ProcessDefinitionImpl pd, String activityName, String destinationName) {
 
-	        ActivityImpl sourceActivity = pd.findActivity(sourceName);
-	        @SuppressWarnings("unchecked")
-	        List<Transition> trans = (List<Transition>) sourceActivity.getOutgoingTransitions();
-	        for (Transition tran : trans) {
-	            if (destName.equals(tran.getDestination().getName())) {
-	                trans.remove(tran);
-	                break;
-	            }
-	        }
-	    }
-	
+        ActivityImpl sourceActivity = pd.findActivity(activityName);
+        @SuppressWarnings("unchecked")//获取该节点的所有连接线
+        List<Transition> trans = (List<Transition>) sourceActivity.getOutgoingTransitions();
+        for (Transition tran : trans) {
+        	//删除目的地是destinationName的连接线
+            if (destinationName.equals(tran.getDestination().getName())) {
+                trans.remove(tran);
+                break;
+            }
+        }
+    }
+    /**
+     * 终止流程实例
+     *
+     * @param processInstanceId
+     */
+    @RequestMapping("endProcessInstance")
+    @ResponseBody
+    private String endProcessInstance(String processInstanceId) {
+        executionService.endProcessInstance(processInstanceId, Execution.STATE_ENDED);
+        return "end";
+    }
+    
+    @RequestMapping("testTx")
+    @ResponseBody
+    private String testTx(String taskId) {
+    	jbpmService.completeTask(taskId);
+        return "end";
+    }  
 }

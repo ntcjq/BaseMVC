@@ -110,6 +110,13 @@ public class TestVar extends JbpmTestCase implements JbpmUtil{
 		executionService.setVariable("test.80001", "userId","002");
 	}
 	
+	/**
+	 * 结束流程   通过processInstanceId
+	 */
+	public void endInstance() {
+		executionService.endProcessInstance("test.150001", Execution.STATE_ENDED);
+	}
+	
 	public void test() {
 		//当前节点所在环节名称
 //		Task task = taskService.getTask("150005");
