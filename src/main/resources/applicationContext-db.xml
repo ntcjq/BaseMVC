@@ -32,9 +32,9 @@
 	    </property>
 	</bean>
 	<!-- 配置datasource 数据源 -->
-	<bean id="masterSource" parent="abstractXADataSource">
+	<bean id="defaultSource" parent="abstractXADataSource">
 	    <property name="uniqueResourceName">
-	        <value>master</value>
+	        <value>default</value>
 	    </property>
 	    <property name="xaDataSourceClassName" value="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" />
 	    <property name="xaProperties">
@@ -65,23 +65,54 @@
 	    <property name="targetDataSources">
 	        <map key-type="java.lang.String">
 	            <!--通过不同的key决定用哪个dataSource-->
-	            <entry value-ref="masterJdbcTemplate" key="masterJdbcTemplate"></entry>
-	            <entry value-ref="slaveJdbcTemplate" key="slaveJdbcTemplate"></entry>
+	            <entry value-ref="defaultSource" key="ds_default"></entry>
+	            <entry value-ref="slaveSource" key="ds_slave"></entry>
 	        </map>
 	    </property>
 	    <!--设置默认的dataSource-->
-	    <property name="defaultTargetDataSource" ref="masterJdbcTemplate">
+	    <property name="defaultTargetDataSource" ref="defaultSource">
 	    </property>
 	</bean>
 
-	<!-- JdbcTemplate -->
-    <bean id="masterJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="masterSource" />
+	<!-- 下面开始配置SqlSessionFactoryBean，有多少个数据源需要支持就配多少个 -->
+	<bean id="sqlSessionFactory_default" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="defaultSource"/>
+        <property name="configLocation" value="classpath:mybatis/mybaits-configuraction.xml" />
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:mybatis/mapper/*.xml</value>
+            </list>
+        </property>
     </bean>
-    
-    <bean id="slaveJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="slaveSource" />
-    </bean>	
+	<bean id="sqlSessionFactory_slave" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="slaveSource"/>
+        <property name="configLocation" value="classpath:mybatis/mybaits-configuraction.xml" />
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:mybatis/mapper/*.xml</value>
+            </list>
+        </property>
+    </bean>
+	
+	
+	<!-- 配置自定义的SqlSessionTemplate模板，注入相关配置 -->
+    <bean id="sqlSessionTemplate" class="com.dao.CustomSqlSessionTemplate" scope="prototype">
+        <!-- 构造注入参数指定本地默认数据源对应的SqlSessionFactoryBean -->
+        <constructor-arg ref="sqlSessionFactory_default" />
+        <property name="targetSqlSessionFactorys">
+            <map>     
+                <!-- key和上文dynamicDataSource配置的数据源的key值保持一致 -->
+                <entry value-ref="sqlSessionFactory_default" key="ds_default"/>
+                <entry value-ref="sqlSessionFactory_slave" key="ds_slave"/>
+            </map> 
+        </property>
+    </bean>
+	
+	<!-- Mybatis MapperScannerConfigurer 自动扫描 将Mapper接口生成代理注入到Spring容器 -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.dao" />
+        <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"/>
+    </bean>
 	
 	
 	<!-- jta配置 -->
@@ -96,7 +127,7 @@
 	    </property>
 	</bean>
 	
-	<bean id="springTransactionManager"
+	<bean id="jtaTransactionManager"
 	      class="org.springframework.transaction.jta.JtaTransactionManager">
 	    <property name="transactionManager">
 	        <ref bean="atomikosTransactionManager" />
@@ -105,8 +136,8 @@
 	        <ref bean="atomikosUserTransaction" />
 	    </property>
 	</bean>
-	<!-- 事务 -->
-	<tx:annotation-driven transaction-manager="springTransactionManager"/>
+	<!-- 开启事务控制的注解支持 -->
+	<tx:annotation-driven transaction-manager="jtaTransactionManager" proxy-target-class="true"/>
 
     <aop:config>
         <aop:pointcut id="baseServiceMethods" expression="execution(* com.service.*.*(..))" />
@@ -114,7 +145,7 @@
     </aop:config>
 
     <!-- 配置事务的传播特性 -->
-    <tx:advice id="txAdvice" transaction-manager="springTransactionManager">
+    <tx:advice id="txAdvice" transaction-manager="jtaTransactionManager">
         <tx:attributes>
             <tx:method name="query*" propagation="REQUIRED" read-only="true" />
             <tx:method name="get*" propagation="REQUIRED" read-only="true" />
